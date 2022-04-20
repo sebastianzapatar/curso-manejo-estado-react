@@ -1,7 +1,15 @@
 import { createReducer } from "@reduxjs/toolkit";
 
-import { completedAuth, checkingAuth, errorAuth } from "../actions/login";
-export default createReducer([],(builder)=>{//Estado inicial del reducer
+import { completedAuth, checkingAuth, errorAuth,
+    sendingAuth, completeSendAuth, errorSenduAuth} from "../actions/login";
+const initialState={
+    isCheckingAuth:false,
+    isAuth:false,
+    isSendingAuth:false,
+    isSuccededLogged:false,
+    error:""
+}
+export default createReducer([initialState],(builder)=>{//Estado inicial del reducer
     builder.addCase(checkingAuth.toString(),(state,action)=>{
         return{...state,
             isCheckingAuth:true}
@@ -16,5 +24,20 @@ export default createReducer([],(builder)=>{//Estado inicial del reducer
             isCheckingAuth:false,
             error:action.error
         }
-    });
+    }).addCase(sendingAuth.toString(),(state,action)=>{
+        return {...state,
+        isSendingAuthForm:true}
+    }).addCase(completeSendAuth.toString(),(state,action)=>{
+        return{...state,
+        isSendingAuth:false,
+        isAuth:true,
+        isSuccededLogged:true}
+    }).addCase(errorSenduAuth.toString(),(state,action)=>{
+        return{...state,
+            isSendingAuth:false,
+            isSuccededLogged:false,
+            error:action.payload.error
+        }
+    })
+    ;
 });

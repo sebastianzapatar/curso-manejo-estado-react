@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { useDispatch,useSelector } from "react-redux";
-
-
+import { useEffect, useState } from "react";
+import { shallowEqual, useDispatch,useSelector } from "react-redux";
+import { isAuthSel, isCheckingAuthSel } from "../redux/reducers/selectors";
+import {submitLogin} from "../redux/actions/login";
 export const Login = () => {
-  const state=useSelector((state)=>state.loginReducer);
+  const isAuth=useSelector(isAuthSel,shallowEqual);//Para evitar rerrenderización
+  const isCheckingAuth=useSelector( isCheckingAuthSel,shallowEqual);//Para evitar rerrenderización
   const dispatch=useDispatch();
-  console.log(state);
+  console.log(isCheckingAuth,isAuth);
   const [username,setUsername]=useState();
   const [password,setPassword]=useState();
   const handleuserName=(e)=>{
@@ -20,13 +21,28 @@ export const Login = () => {
       e.preventDefault();
       
       if(username.length>2 && password.length>2){
-          console.log('exito');
+          dispatch(submitLogin(username,password));
       }
       else{
           alert("Ingrese la logitud correcta");
       }
   }
-  
+  useEffect(()=>{
+        if(isAuth){
+            console.log("logueado");
+        }
+        else{
+            console.log("No logging");
+        }
+  },[])
+  useEffect(()=>{
+    if(isAuth){
+        alert("logueado");
+    }
+    else{
+        console.log("No logging");
+    }
+  },[isAuth])
   return (
     <form>
         <input type="text" value={username} name="username" id="username"
